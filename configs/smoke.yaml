@@ -1,0 +1,39 @@
+# Offline smoke configuration: synthetic phantoms, no download, runs in seconds.
+# This is what continuous integration executes.
+seed: 0
+
+dataset:
+  name: synthetic
+  size: 32
+  root: data
+  reconstruct: true    # train on reconstructed images (see data/datasets.py)
+  subset:
+    train: 64
+    val: 32
+    test: 32
+
+model:
+  name: smallcnn
+  width: 8
+  dropout: 0.3
+
+train:
+  epochs: 2
+  batch_size: 16
+  lr: 0.005
+  weight_decay: 0.0001
+  device: cpu
+  checkpoint: results/smoke_model.pt
+
+experiment:
+  out_dir: results/smoke
+  explainers: [gradcam]
+  perturbations: [dose, blur]
+  n_eval: 16
+  n_explain: 4
+  n_faithfulness: 2
+  n_sanity: 1
+  faithfulness_steps: 8
+  explainer_kwargs:
+    integrated_gradients:
+      steps: 8

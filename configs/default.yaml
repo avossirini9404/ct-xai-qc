@@ -1,0 +1,42 @@
+# Default experiment: OrganAMNIST (abdominal CT), 64 x 64, small CNN.
+# Everything downstream is a function of this file and of the seed below.
+seed: 20260915
+
+dataset:
+  name: organamnist        # organamnist | nodulemnist3d | synthetic
+  size: 64                 # MedMNIST v2 publishes 28, 64, 128, 224
+  root: data
+  reconstruct: true    # train on reconstructed images (see data/datasets.py)
+  subset:                  # stratified caps; remove for the full dataset
+    train: 12000
+    val: 2000
+    test: 2000
+
+model:
+  name: smallcnn           # smallcnn | resnet18
+  width: 16
+  dropout: 0.3
+
+train:
+  epochs: 15
+  batch_size: 128
+  lr: 0.003
+  weight_decay: 0.0001
+  device: null             # null = cuda when available, otherwise cpu
+  checkpoint: results/model.pt
+
+experiment:
+  out_dir: results
+  explainers: [gradcam, integrated_gradients]
+  perturbations: [dose, kernel, hu_shift, contrast, blur]
+  n_eval: 1000             # images for accuracy / AUC / calibration under shift
+  n_explain: 64            # images for the saliency comparison
+  n_faithfulness: 32       # images for deletion / insertion curves
+  n_sanity: 8              # images for cascading randomisation
+  faithfulness_steps: 32
+  explainer_kwargs:
+    integrated_gradients:
+      steps: 32
+    occlusion:
+      patch: 8
+      stride: 4
