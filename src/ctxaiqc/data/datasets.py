@@ -100,6 +100,9 @@ def _load_medmnist(name: str, root: str, size: int) -> dict[str, tuple[np.ndarra
             "or use dataset: synthetic to run offline."
         ) from exc
 
+    # medmnist refuses to create its own root directory and raises if it is missing.
+    Path(root).mkdir(parents=True, exist_ok=True)
+
     info = INFO[name]
     cls = getattr(medmnist, info["python_class"])
     splits = {}
@@ -219,11 +222,14 @@ def load_dataset(
     subset = subset or {}
     out, raw = {}, {}
     for split, (x, y) in splits.items():
-        raw[split] = _stratified_subset(x, y, subset.get(split), seed)[0]
+        # Subsample first: acquiring the whole split before discarding most of it would
+        # spend minutes of simulation on images the run never uses.
+        x, y = _stratified_subset(x, y, subset.get(split), seed)
+        raw[split] = x
         if reconstruct:
-            cache = Path(root) / "cache" / f"{name}_{size}_{split}_reference.npz"
+            cache = Path(root) / "cache" / f"{name}_{size}_{split}_{len(x)}_reference.npz"
             x = _simulate_reference(x, seed=seed, cache=cache)
-        out[split] = _stratified_subset(x, y, subset.get(split), seed)
+        out[split] = (x, y)
 
     n_classes = int(max(int(y.max()) for _, y in splits.values()) + 1)
     from medmnist import INFO  # local import: only reached when medmnist is present
