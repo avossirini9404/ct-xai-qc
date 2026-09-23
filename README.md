@@ -94,23 +94,31 @@ than the perturbation.
 
 ## Reproduce it
 
-```bash
-pip install -e ".[data,dev]"     # or: conda env create -f environment.yml
-make train                        # ~6 min
-make experiment                   # ~12 min, writes results/tables/*.csv
-make report                       # figures + results/tables/summary.md
+```
+python -m pip install -e ".[data,dev]"
+python -m ctxaiqc.train          --config configs/default.yaml
+python -m ctxaiqc.run_experiment --config configs/default.yaml
+python -m ctxaiqc.report         --config configs/default.yaml
 ```
 
-Measured on 4 CPU cores, no GPU, with `configs/default.yaml` (12 000 training images at 64 px). The
-first run additionally spends about four minutes simulating the reference acquisition of every
-image; the result is cached under `data/cache/`. A GPU shortens training but not the simulator,
-which is the bulk of the time and runs on CPU.
+**What the default configuration actually runs.** `configs/default.yaml` trains on a stratified
+subset of 4 000 OrganAMNIST images at 64 px for 10 epochs, and evaluates the perturbation protocol
+on 400 test images, of which 64 are used for the saliency comparison. That is a deliberate choice:
+the acquisition simulator runs on CPU and is the bulk of the wall-clock time, and the protocol
+compares a model against itself under acquisition change rather than against an accuracy threshold,
+so a smaller training set costs accuracy without invalidating the comparison. Remove the `subset`
+block to train on the full dataset; the numbers reported here are from the subset.
+
+Timings measured on [your CPU], no GPU. The first run additionally spends [X] minutes simulating the
+reference acquisition of every image it will use; the result is cached under `data/cache/`. A GPU
+shortens training but not the simulator.
 
 `make smoke` runs the whole pipeline on synthetic phantoms in under a minute and needs no download.
 `make test` runs 33 unit and smoke tests, offline.
 
 Every run is determined by the seed in the configuration file, which is recorded inside the
 checkpoint together with the configuration that produced it.
+
 
 ## Methods
 
