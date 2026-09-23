@@ -8,7 +8,7 @@ dataset:
   root: data
   reconstruct: true    # train on reconstructed images (see data/datasets.py)
   subset:                  # stratified caps; remove for the full dataset
-    train: 12000
+    train: 4000
     val: 2000
     test: 2000
 
@@ -18,7 +18,7 @@ model:
   dropout: 0.3
 
 train:
-  epochs: 15
+  epochs: 10
   batch_size: 128
   lr: 0.003
   weight_decay: 0.0001
@@ -29,7 +29,7 @@ experiment:
   out_dir: results
   explainers: [gradcam, integrated_gradients]
   perturbations: [dose, kernel, hu_shift, contrast, blur]
-  n_eval: 1000             # images for accuracy / AUC / calibration under shift
+  n_eval: 400              # images for accuracy / AUC / calibration under shift
   n_explain: 64            # images for the saliency comparison
   n_faithfulness: 32       # images for deletion / insertion curves
   n_sanity: 8              # images for cascading randomisation

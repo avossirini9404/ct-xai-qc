@@ -36,7 +36,7 @@ question no scanner ever asks.
 
 ## Main result
 
-![Explanation agreement against acquisition change](results/figures/stability_vs_dose.png)
+<!-- ![Explanation agreement against acquisition change](results/figures/stability_vs_dose.png) -->
 
 *Produced by `make report` from your own run, with `configs/default.yaml`.*
 
@@ -47,9 +47,6 @@ predicted class did not change**. Wherever the left-hand curves stay flat and th
 fall, the prediction survived the acquisition change and the explanation offered for it did not —
 and only the second one is what a reader is shown.
 
-<!-- After running on MedMNIST, replace the sentence below with your own numbers, in this shape:
-     "At a 50 HU calibration offset every prediction is unchanged and balanced accuracy is X, while
-     the top-10% overlap of the Grad-CAM map with its reference has fallen from Y to Z." -->
 
 A worked example on the synthetic phantom dataset that ships with the repository, which needs no
 download and runs in under a minute (`make smoke`), is committed at
